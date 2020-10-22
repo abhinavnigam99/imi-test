@@ -1,39 +1,44 @@
-<form [formGroup]="kidsForm" (ngSubmit)='onSubmit()' #kids>
-  <label>Do you have children?</label>
-  <div *ngFor='let child of children'>
-    <label><input type='radio' [value]='child' formControlName='child'>{{child}}</label>
+<form [formGroup]='detailsForm' (ngSubmit)='onSubmit()' #detail>
+  <div>
+    <label>Do you have children?</label>
+    <div *ngFor='let child of children'>
+      <label><input type='radio' [value]='child' formControlName='child' (change)="childValue()">{{child}}</label>
+    </div>
   </div>
-  <div *ngIf='kidsForm.get("child").value == "Yes"'>
+  <div *ngIf='hasChild == "Yes"'>
     <label>Enter number of children</label>
-    <input type='number' formControlName='childrenCount'>
-    <span *ngIf='!kidsForm.get("childrenCount").valid && kidsForm.get("childrenCount").touched'>Please enter some value</span>
+    <input type='number' formControlName='childrenCount' (input)="childCountChange($event)">
   </div>
+  <div *ngFor='let item of formArrayValue.controls;let i = index;'>
+    <div [formGroup]='item'>
+      <div>
+        <label>Title (Mr./Ms.)</label>
+        <input type='text' formControlName='title'>
+        <div *ngIf="item.controls.title.errors">
+          <div *ngIf="item.controls.title.errors.required">Title is required</div>
+          <div *ngIf="item.controls.title.errors.pattern">Title must be a alphanumeric</div>
+          <div *ngIf="item.controls.title.errors.minlength">Title must atleat two characters</div>
+        </div>
+      </div>
+      <div>
+        <label>First Name</label>
+        <input type='text' formControlName='firstName'>
+        <div *ngIf="item.controls.firstName.errors">
+          <div *ngIf="item.controls.firstName.errors.required">First Name is required</div>
+          <div *ngIf="item.controls.firstName.errors.pattern">First Name must be a alphanumeric</div>
+          <div *ngIf="item.controls.firstName.errors.minlength">First Name must atleat two characters</div>
+        </div>
+      </div>
+      <div>
+        <label>Last Name</label>
+        <input type='text' formControlName='lastName'>
+        <div *ngIf="item.controls.lastName.errors">
+          <div *ngIf="item.controls.lastName.errors.required">Last Name is required</div>
+          <div *ngIf="item.controls.lastName.errors.pattern">Last Name must be a alphanumeric</div>
+          <div *ngIf="item.controls.lastName.errors.minlength">Last Name must atleat two characters</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button type="submit" [disabled]='detailsForm.invalid'>Submit</button>
 </form>
-
-<form [formGroup]='detailsForm' (ngSubmit)='onSubmit()' *ngIf="kidsForm.get('childrenCount').value>0" #detail>
-  <div *ngFor='let title of titles'>
-    <label><input type='radio' [value]='title' formControlName='title'>{{title}}</label>
-  </div>
-  <div>
-    <label>First Name</label>
-    <input type='text' formControlName='firstName'>
-    <span *ngIf='!detailsForm.get("firstName").valid && detailsForm.get("firstName").touched'>Please enter valid First
-      Name</span>
-  </div>
-  <div>
-    <label>Last Name</label>
-    <input type='text' formControlName='lastName'>
-    <span *ngIf='!detailsForm.get("lastName").valid && detailsForm.get("lastName").touched'>Please enter valid First
-      Name</span>
-  </div>
-
-  <!-- [disabled]='detailsForm.invalid' -->
-  <button type="submit">Submit</button>
-</form>
-<!--
-/*
-
-
-children -> yes/no
-yes-> howmany -> loop </form/>
-no-> nothng -->

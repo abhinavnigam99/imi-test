@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
@@ -7,34 +7,54 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  titles = ['Mr.', 'Ms.'];
   children = ['Yes', 'No'];
+  hasChild: any;
   detailsForm: FormGroup;
-  kidsForm: FormGroup;
+
+  constructor(private formBuilder: FormBuilder) { }
 
   ngOnInit() {
 
-    this.kidsForm = new FormGroup({
-      child: new FormControl('No', Validators.required),
-      childrenCount: new FormControl(null, [Validators.required, Validators.max(10), Validators.min(1)]),
-    });
-
-    this.detailsForm = new FormGroup({
-      title: new FormControl('Mr.', Validators.required),
-      firstName: new FormControl(null, [Validators.required, Validators.pattern('^[a-zA-Z0-9]*$'), Validators.minLength(2)]),
-      lastName: new FormControl(null, [Validators.required, Validators.pattern('^[a-zA-Z0-9]*$'), Validators.minLength(2)]),
-
+    this.detailsForm = this.formBuilder.group({
+      child: ['No', Validators.required],
+      childrenCount: [0],
+      childrenDetail: new FormArray([])
     });
   }
 
   onSubmit() {
-    console.log(this.detailsForm);
+    console.log(this.detailsForm.value);
   }
-  /*
 
-    FN and LN: only alphanumeric and length > 2char, else show error below the input
-  all fields are required
-  errors should be specific
-  error should be as-you-type
-  no styling is needed */
+  childValue() {
+    this.hasChild = this.detailsForm.get('child').value;
+    if (this.hasChild === 'Yes') {
+      this.detailsForm.get('childrenCount').setValidators([Validators.required, Validators.max(10), Validators.min(1)]);
+    }
+    else{
+      this.detailsForm.get('childrenCount').setValidators([]);
+    }
+    console.log(this.hasChild);
+  }
+
+  childCountChange(e) {
+    const numberOfChild = e.target.value || 0;
+    if (this.formArrayValue.length < numberOfChild) {
+      for (let i = this.formArrayValue.length; i < numberOfChild; i++) {
+        this.formArrayValue.push(this.formBuilder.group({
+          title: ['', [Validators.required, Validators.pattern('^[a-zA-Z.]*$'), Validators.minLength(2)]],
+          firstName: ['', [Validators.required, Validators.pattern('^[a-zA-Z0-9]*$'), Validators.minLength(2)]],
+          lastName: ['', [Validators.required, Validators.pattern('^[a-zA-Z0-9]*$'), Validators.minLength(2)]],
+        }));
+      }
+    } else {
+      for (let i = this.formArrayValue.length; i >= numberOfChild; i--) {
+        this.formArrayValue.removeAt(i);
+      }
+    }
+  }
+
+  get formValue() { return this.detailsForm.controls; }
+  get formArrayValue() { return this.formValue.childrenDetail as FormArray; }
+
 }
