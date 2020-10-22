@@ -23,16 +23,18 @@ export class AppComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log(this.detailsForm.value);
+    this.detailsForm.get('childrenCount').setValue('');
+    console.log(this.detailsForm);
   }
 
   childValue() {
     this.hasChild = this.detailsForm.get('child').value;
     if (this.hasChild === 'Yes') {
-      this.detailsForm.get('childrenCount').setValidators([Validators.required, Validators.max(10), Validators.min(1)]);
-    }
-    else{
-      this.detailsForm.get('childrenCount').setValidators([]);
+      this.detailsForm.get('childrenCount').setValidators([Validators.required, Validators.min(1)]);
+      this.detailsForm.get('childrenCount').updateValueAndValidity();
+    } else {
+      this.detailsForm.get('childrenCount').clearValidators();
+      this.detailsForm.get('childrenCount').updateValueAndValidity();
     }
     console.log(this.hasChild);
   }
@@ -51,6 +53,7 @@ export class AppComponent implements OnInit {
       for (let i = this.formArrayValue.length; i >= numberOfChild; i--) {
         this.formArrayValue.removeAt(i);
       }
+
     }
   }
 

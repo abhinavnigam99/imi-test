@@ -8,6 +8,10 @@
   <div *ngIf='hasChild == "Yes"'>
     <label>Enter number of children</label>
     <input type='number' formControlName='childrenCount' (input)="childCountChange($event)">
+    <div *ngIf="detailsForm.controls.childrenCount.errors">
+      <div *ngIf="detailsForm.controls.childrenCount.errors.required">Count is required</div>
+      <div *ngIf="detailsForm.controls.childrenCount.errors.min">Count must atleat 1</div>
+    </div>
   </div>
   <div *ngFor='let item of formArrayValue.controls;let i = index;'>
     <div [formGroup]='item'>
