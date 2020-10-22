@@ -23,7 +23,6 @@ export class AppComponent implements OnInit {
   }
 
   onSubmit() {
-    this.detailsForm.get('childrenCount').setValue('');
     console.log(this.detailsForm);
   }
 
